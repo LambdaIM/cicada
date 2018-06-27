@@ -1,21 +1,21 @@
 use std::io::Write;
 use std::path::Path;
 
-use sqlite;
-use sqlite::State;
+// use sqlite;
+// use sqlite::State;
 
 use history;
 use parsers;
 
 pub fn run(tokens: &Vec<(String, String)>) -> i32 {
-    let args = parsers::parser_line::tokens_to_args(&tokens);
+    let _args = parsers::parser_line::tokens_to_args(&tokens);
     let hfile = history::get_history_file();
     let path = Path::new(hfile.as_str());
     if !path.exists() {
         println_stderr!("no history file.");
         return 1;
     }
-
+    /*
     if let Ok(conn) = sqlite::open(hfile.clone()) {
         if args.len() == 1 {
             return list_current_history(&conn);
@@ -28,9 +28,11 @@ pub fn run(tokens: &Vec<(String, String)>) -> i32 {
         println_stderr!("history: history file open error.");
         return 1;
     }
+    */
     0
 }
 
+/*
 fn list_current_history(conn: &sqlite::Connection) -> i32 {
     let history_table = history::get_history_table();
     let q = format!(
@@ -69,7 +71,9 @@ fn list_current_history(conn: &sqlite::Connection) -> i32 {
     }
     0
 }
+*/
 
+/*
 fn search_history(conn: &sqlite::Connection, q: &str) {
     let history_table = history::get_history_table();
     let q = format!(
@@ -108,3 +112,4 @@ fn search_history(conn: &sqlite::Connection, q: &str) {
         }
     }
 }
+*/

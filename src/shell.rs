@@ -1,13 +1,14 @@
 use std::env;
-use errno::errno;
+// use errno::errno;
 use libc;
 use std::collections::HashMap;
-use std::mem;
+// use std::mem;
 
 use regex::Regex;
 
 use parsers;
-use tools::{self, clog};
+//use tools::{self, clog};
+use tools::{self};
 
 #[derive(Debug, Clone)]
 pub struct Shell {
@@ -27,10 +28,11 @@ impl Shell {
         }
     }
 
+    /*
     pub fn add_alias(&mut self, name: &str, value: &str) {
         self.alias.insert(name.to_string(), value.to_string());
     }
-
+    */
     pub fn get_alias_content(&self, name: &str) -> Option<String> {
         let mut result;
         match self.alias.get(name) {
@@ -50,6 +52,7 @@ impl Shell {
     }
 }
 
+/** 
 pub unsafe fn give_terminal_to(gid: i32) -> bool {
     let mut mask: libc::sigset_t = mem::zeroed();
     let mut old_mask: libc::sigset_t = mem::zeroed();
@@ -80,6 +83,7 @@ pub unsafe fn give_terminal_to(gid: i32) -> bool {
     }
     given
 }
+**/
 
 pub fn extend_env_blindly(sh: &Shell, token: &str) -> String {
     let re;

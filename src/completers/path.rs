@@ -3,7 +3,7 @@ use std::env;
 use std::fs::read_dir;
 use std::io::Write;
 use std::iter::FromIterator;
-use std::os::unix::fs::PermissionsExt;
+//use std::os::unix::fs::PermissionsExt;
 use std::path::{is_separator, MAIN_SEPARATOR};
 use std::sync::Arc;
 
@@ -197,11 +197,13 @@ fn complete_bin(sh: &shell::Shell, path: &str) -> Vec<Completion> {
                                     continue;
                                 }
                             }
+                            /*
                             let mode = _mode.permissions().mode();
                             if mode & 0o111 == 0 {
                                 // not binary
                                 continue;
                             }
+                            */
                             if checker.contains(&name) {
                                 continue;
                             }

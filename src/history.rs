@@ -1,12 +1,12 @@
-use std::collections::HashMap;
+//use std::collections::HashMap;
 use std::env;
 use std::fs;
-use std::io::Write;
+//use std::io::Write;
 use std::path::Path;
 
 use linefeed::Interface;
 use linefeed::terminal::DefaultTerminal;
-use sqlite;
+// use sqlite;
 
 use tools;
 use shell;
@@ -20,7 +20,7 @@ pub fn init(rl: &mut Interface<DefaultTerminal>) {
     }
     rl.set_history_size(hist_size);
 
-    let history_table = get_history_table();
+    // let _history_table = get_history_table();
     let hfile = get_history_file();
     let path = Path::new(hfile.as_str());
     if !path.exists() {
@@ -55,6 +55,7 @@ pub fn init(rl: &mut Interface<DefaultTerminal>) {
         }
     }
 
+    /*
     let mut histories: HashMap<String, bool> = HashMap::new();
     match sqlite::open(hfile.clone()) {
         Ok(conn) => {
@@ -115,6 +116,7 @@ pub fn init(rl: &mut Interface<DefaultTerminal>) {
             println_stderr!("cicada: sqlite conn error - {:?}", e);
         }
     }
+    */
 }
 
 pub fn get_history_file() -> String {
@@ -127,7 +129,7 @@ pub fn get_history_file() -> String {
         return format!("{}/{}", home, ".local/share/cicada/history.sqlite");
     }
 }
-
+/*
 pub fn get_history_table() -> String {
     if let Ok(hfile) = env::var("HISTORY_TABLE") {
         return hfile;
@@ -135,7 +137,8 @@ pub fn get_history_table() -> String {
         return String::from("cicada_history");
     }
 }
-
+*/
+/*
 fn delete_duplicated_histories() {
     let hfile = get_history_file();
     let history_table = get_history_table();
@@ -155,14 +158,15 @@ fn delete_duplicated_histories() {
         Err(e) => println_stderr!("cicada: sqlite open file error - {:?}", e),
     }
 }
+*/
 
 pub fn add(
     sh: &mut shell::Shell,
     rl: &mut Interface<DefaultTerminal>,
     line: &str,
     status: i32,
-    tsb: f64,
-    tse: f64,
+    _tsb: f64,
+    _tse: f64,
 ) {
     sh.previous_status = status;
     if line == sh.previous_cmd {
@@ -171,6 +175,7 @@ pub fn add(
     rl.add_history(line.to_string());
 
     sh.previous_cmd = line.to_string();
+    /*
     let hfile = get_history_file();
     let history_table = get_history_table();
     let conn;
@@ -196,4 +201,5 @@ pub fn add(
         Ok(_) => {}
         Err(e) => println!("failed to save history: {:?}", e),
     }
+    */
 }

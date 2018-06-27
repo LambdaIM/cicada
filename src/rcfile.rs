@@ -1,3 +1,4 @@
+/*
 use std::env;
 use std::fs::File;
 use std::io::Read;
@@ -8,7 +9,9 @@ use regex::Regex;
 use builtins;
 use shell;
 use tools;
+*/
 
+/*
 pub fn load_rcfile(sh: &mut shell::Shell) {
     // make "/usr/local/bin" as the first item in PATH
     if let Ok(env_path) = env::var("PATH") {
@@ -42,7 +45,8 @@ pub fn load_rcfile(sh: &mut shell::Shell) {
         handle_line(sh, line);
     }
 }
-
+*/
+/*
 fn handle_line(sh: &mut shell::Shell, line: &str) {
     if tools::is_env(line) {
         handle_env(sh, line);
@@ -53,11 +57,14 @@ fn handle_line(sh: &mut shell::Shell, line: &str) {
         return;
     }
 }
+*/
 
+/*
 fn handle_env(sh: &shell::Shell, line: &str) {
     builtins::export::run(sh, line);
 }
-
+*/
+/*
 fn handle_alias(sh: &mut shell::Shell, line: &str) {
     let re;
     match Regex::new(r"^ *alias +([a-zA-Z0-9_\.-]+)=(.*)$") {
@@ -73,3 +80,4 @@ fn handle_alias(sh: &mut shell::Shell, line: &str) {
         sh.add_alias(name.as_str(), value.as_str());
     }
 }
+*/

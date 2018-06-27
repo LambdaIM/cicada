@@ -1,19 +1,19 @@
 #![allow(unknown_lints)]
 extern crate errno;
-extern crate exec;
+//extern crate exec;
 extern crate glob;
 extern crate libc;
 extern crate linefeed;
-extern crate nix;
+//extern crate nix;
 extern crate regex;
-extern crate sqlite;
+//extern crate sqlite;
 extern crate time;
 extern crate yaml_rust;
 #[macro_use]
 extern crate nom;
 
 use std::env;
-use std::sync::Arc;
+//use std::sync::Arc;
 
 use linefeed::{Interface, ReadResult};
 
@@ -35,7 +35,7 @@ pub use tools::CommandResult;
 
 fn main() {
     let mut sh = shell::Shell::new();
-    rcfile::load_rcfile(&mut sh);
+    // rcfile::load_rcfile(&mut sh);
 
     // this section handles `cicada -c 'echo hi && echo yoo'`,
     // e.g. it could be triggered from Vim (`:!ls` etc).
@@ -46,16 +46,20 @@ fn main() {
         return;
     }
 
+    // FIXME: give isatty check back to windows & msys|cygwin
+    /*
     let isatty: bool = unsafe { libc::isatty(0) == 1 };
     if !isatty {
         // cases like open a new MacVim window,
         // (i.e. CMD+N) on an existing one
+        println!("linefeed non_tty");
         execute::handle_non_tty(&mut sh);
         return;
     }
+    */
 
     let mut rl;
-    match Interface::new("cicada") {
+    match Interface::new("ameoba") {
         Ok(x) => rl = x,
         Err(e) => {
             // non-tty will raise errors here
@@ -63,12 +67,13 @@ fn main() {
             return;
         }
     }
-    history::init(&mut rl);
-    rl.set_completer(Arc::new(completers::CicadaCompleter{sh: Arc::new(sh.clone())}));
+    // history::init(&mut rl);
+    // rl.set_completer(Arc::new(completers::CicadaCompleter{sh: Arc::new(sh.clone())}));
 
     let mut status = 0;
     loop {
         let prompt = libs::prompt::get_prompt(status);
+        println!("linefeed Interface prompt: {:?}", prompt);
         rl.set_prompt(&prompt);
         match rl.read_line() {
             Ok(ReadResult::Input(line)) => {

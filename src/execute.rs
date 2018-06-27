@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 use std::error::Error as STDError;
-use std::fs::File;
+//use std::fs::File;
 use std::io::{self, Error, Read, Write};
-use std::os::unix::io::{FromRawFd, IntoRawFd};
-use std::os::unix::process::CommandExt;
-use std::path::Path;
+// use std::os::unix::io::{FromRawFd, IntoRawFd};
+// use std::os::unix::process::CommandExt;
+//use std::path::Path;
 use std::process::{Command, Stdio, Output};
 
-use nix::unistd::pipe;
-use nix::sys::signal;
+// use nix::unistd::pipe;
+// use nix::sys::signal;
 use nom::IResult;
 use libc;
 
@@ -18,7 +18,7 @@ use builtins;
 use parsers;
 use shell;
 
-extern "C" fn handle_sigchld(_: i32) {
+// extern "C" fn handle_sigchld(_: i32) {
     // When handle waitpid here & for commands like `ls | cmd-not-exist`
     // will panic: "wait() should either return Ok or panic"
     // which I currently don't know how to fix.
@@ -30,7 +30,7 @@ extern "C" fn handle_sigchld(_: i32) {
         let pid = libc::waitpid(-1, ptr, libc::WNOHANG);
     }
     */
-}
+// }
 
 /// Entry point for non-ttys (e.g. Cmd-N on MacVim)
 pub fn handle_non_tty(sh: &mut shell::Shell) {
@@ -120,11 +120,11 @@ pub fn run_procs(sh: &mut shell::Shell, line: &str, tty: bool) -> i32 {
     status
 }
 
-pub fn run_proc(sh: &mut shell::Shell, line: &str, tty: bool) -> i32 {
+pub fn run_proc(sh: &mut shell::Shell, line: &str, _tty: bool) -> i32 {
     let mut envs = HashMap::new();
     let cmd_line = tools::remove_envs_from_line(line, &mut envs);
 
-    let mut tokens = parsers::parser_line::cmd_to_tokens(&cmd_line);
+    let tokens = parsers::parser_line::cmd_to_tokens(&cmd_line);
     if tokens.is_empty() {
         return 0;
     }
@@ -143,16 +143,17 @@ pub fn run_proc(sh: &mut shell::Shell, line: &str, tty: bool) -> i32 {
     if cmd == "history" {
         return builtins::history::run(&tokens);
     }
-    if cmd == "exec" {
-        return builtins::exec::run(&tokens);
-    }
+    //if cmd == "exec" {
+    //    return builtins::exec::run(&tokens);
+    //}
     if cmd == "cinfo" {
         return builtins::cinfo::run(&tokens);
     }
     if cmd == "exit" {
         return builtins::exit::run(&tokens);
     }
-
+    return 0;
+    /*
     // for any other situations
     let mut background = false;
     let mut len = tokens.len();
@@ -191,6 +192,7 @@ pub fn run_proc(sh: &mut shell::Shell, line: &str, tty: bool) -> i32 {
         }
     }
     result
+    */
 }
 
 fn run_calc_float(line: &str) -> Result<f64, String> {
@@ -223,7 +225,7 @@ fn run_calc_int(line: &str) -> Result<i64, String> {
 
 pub fn run_pipeline(
     tokens: types::Tokens,
-    redirect_from: &str,
+    _redirect_from: &str,
     background: bool,
     tty: bool,
     capture_output: bool,
@@ -237,9 +239,10 @@ pub fn run_pipeline(
 
     // the defaults to return
     let mut status = 0;
-    let mut term_given = false;
+    let term_given = false;
     let mut output = None;
 
+    /*
     let sig_action = signal::SigAction::new(
         signal::SigHandler::Handler(handle_sigchld),
         signal::SaFlags::empty(),
@@ -251,6 +254,7 @@ pub fn run_pipeline(
             Err(e) => println!("sigaction error: {:?}", e),
         }
     }
+    */
 
     let cmds = tokens_to_cmd_tokens(&tokens);
     let length = cmds.len();
@@ -276,6 +280,8 @@ pub fn run_pipeline(
         println!("cicada: invalid command: cmds with empty length");
         return (1, false, None);
     }
+
+    /*
     let mut pipes = Vec::new();
     for _ in 0..length - 1 {
         let fds;
@@ -292,14 +298,15 @@ pub fn run_pipeline(
         println!("cicada: invalid command: unmatched pipes count");
         return (1, false, None);
     }
+    */
 
-    let isatty = if tty {
+    let _isatty = if tty {
         unsafe { libc::isatty(0) == 1 }
     } else {
         false
     };
     let mut i = 0;
-    let mut pgid: u32 = 0;
+    let mut _pgid: u32 = 0;
     let mut children: Vec<u32> = Vec::new();
 
     let mut _envs: HashMap<String, String> = HashMap::new();
@@ -330,7 +337,8 @@ pub fn run_pipeline(
         let mut p = Command::new(program.trim_matches(|c| c == '(' || c == ')'));
         p.args(&cmd_[1..]);
         p.envs(&_envs);
-
+        
+        /*
         if isatty {
             p.before_exec(move || {
                 unsafe {
@@ -345,12 +353,15 @@ pub fn run_pipeline(
                 Ok(())
             });
         }
+        */
 
+        /*
         if i > 0 {
             let fds_prev = pipes[i - 1];
             let pipe_in = unsafe { Stdio::from_raw_fd(fds_prev.0) };
             p.stdin(pipe_in);
         }
+       
 
         // all processes except the last one need to get stdout piped
         if i < length - 1 {
@@ -358,13 +369,14 @@ pub fn run_pipeline(
             let pipe_out = unsafe { Stdio::from_raw_fd(fds.1) };
             p.stdout(pipe_out);
         }
-
+        */
         // capture output of last process if needed.
         if i == length - 1 && capture_output {
             p.stdout(Stdio::piped());
             p.stderr(Stdio::piped());
         }
 
+        /*
         for item in &cmd_new.redirects {
             let from_ = &item.0;
             let op_ = &item.1;
@@ -429,7 +441,7 @@ pub fn run_pipeline(
             let file_in = unsafe { Stdio::from_raw_fd(fd) };
             p.stdin(file_in);
         }
-
+        */
         let mut child;
         match p.spawn() {
             Ok(x) => {
@@ -445,12 +457,14 @@ pub fn run_pipeline(
             }
         }
 
+        /*
         if isatty && !background && i == 0 {
             pgid = child.id();
             unsafe {
                 term_given = shell::give_terminal_to(pgid as i32);
             }
         }
+        */
 
         if !background && i == length - 1 {
             if capture_output {
@@ -495,6 +509,7 @@ pub fn run_pipeline(
             // ack of the zombies
             // FIXME: better wait children in signal handler, but ..
             // .. see comments in `handle_sigchld()` above.
+            /*
             for pid in &children {
                 unsafe {
                     let mut stat: i32 = 0;
@@ -502,11 +517,13 @@ pub fn run_pipeline(
                     libc::waitpid(*pid as i32, ptr, 0);
                 }
             }
+            */
         }
         i += 1;
     }
     (status, term_given, output)
 }
+
 
 pub fn run(line: &str) -> Result<CommandResult, &str> {
     let mut envs = HashMap::new();

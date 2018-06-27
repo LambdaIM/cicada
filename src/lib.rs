@@ -1,12 +1,11 @@
 #![allow(dead_code)]
 extern crate errno;
-extern crate exec;
 extern crate glob;
 extern crate libc;
 extern crate linefeed;
-extern crate nix;
+//extern crate nix;
 extern crate regex;
-extern crate sqlite;
+//extern crate sqlite;
 extern crate time;
 
 #[macro_use]

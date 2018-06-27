@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::process::Stdio;
-use std::os::unix::io::{FromRawFd, IntoRawFd};
+// use std::process::Stdio;
+// use std::os::unix::io::{FromRawFd, IntoRawFd};
 use time;
 
 use glob;
@@ -110,10 +110,12 @@ pub fn get_user_completer_dir() -> String {
     format!("{}/.cicada/completers", home)
 }
 
+/*
 pub fn get_rc_file() -> String {
     let home = get_user_home();
     format!("{}/{}", home, ".cicadarc")
 }
+*/
 
 pub fn unquote(s: &str) -> String {
     let args = parsers::parser_line::line_to_plain_tokens(s);
@@ -515,9 +517,11 @@ pub fn env_args_to_command_line() -> String {
     result
 }
 
+/*
 pub fn is_alias(line: &str) -> bool {
     re_contains(line, r"^ *alias +[a-zA-Z0-9_\.-]+=.*$")
 }
+*/
 
 extern "C" {
     fn gethostname(name: *mut libc::c_char, size: libc::size_t) -> libc::c_int;
@@ -657,6 +661,7 @@ pub fn remove_envs_from_line(line: &str, envs: &mut HashMap<String, String>) -> 
     result
 }
 
+/** 
 pub fn create_fd_from_file(file_name: &str, append: bool) -> Result<Stdio, String> {
     let mut oos = OpenOptions::new();
     if append {
@@ -675,7 +680,8 @@ pub fn create_fd_from_file(file_name: &str, append: bool) -> Result<Stdio, Strin
             Err(format!("failed to create fd from file: {:?}", e))
         }
     }
-}
+} 
+*/
 
 #[cfg(test)]
 mod tests {
